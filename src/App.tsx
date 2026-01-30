@@ -119,6 +119,8 @@ function App() {
                   currentMonth={currentMonth}
                   onPreviousMonth={handlePreviousMonth}
                   onNextMonth={handleNextMonth}
+                  structureMembers={structureMembers}
+                  onMemberClick={(m) => setSelectedMember(m)}
                 />
               </div>
             )}

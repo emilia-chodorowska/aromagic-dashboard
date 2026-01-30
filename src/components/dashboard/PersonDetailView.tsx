@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ArrowLeft, Copy, Star, Zap, TrendingUp, BarChart3, User, CheckCircle, MinusCircle, ChevronLeft, ChevronRight, Settings, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { RankPlanner } from './RankPlanner'
 import type { StructureMember } from '@/types'
 
 interface PersonDetailViewProps {
@@ -9,6 +10,8 @@ interface PersonDetailViewProps {
   currentMonth: Date
   onPreviousMonth: () => void
   onNextMonth: () => void
+  structureMembers: StructureMember[]
+  onMemberClick?: (member: StructureMember) => void
 }
 
 export function PersonDetailView({
@@ -17,6 +20,8 @@ export function PersonDetailView({
   currentMonth,
   onPreviousMonth,
   onNextMonth,
+  structureMembers,
+  onMemberClick,
 }: PersonDetailViewProps) {
   const [isInfoExpanded, setIsInfoExpanded] = useState(false)
   const copyToClipboard = (text: string) => {
@@ -134,30 +139,70 @@ export function PersonDetailView({
         {/* Rozwijana sekcja Sponsor/Enroller */}
         {isInfoExpanded && (member.sponsor || member.enroller) && (
           <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3 sm:gap-4">
-            {member.sponsor && (
-              <div className="flex-1 bg-gray-50 rounded-xl p-3">
+            {member.sponsor && member.sponsor.id && (
+              <div
+                className="flex-1 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+                onClick={() => {
+                  if (onMemberClick && member.sponsor) {
+                    const sponsorMember: StructureMember = {
+                      id: member.sponsor.id,
+                      name: member.sponsor.name,
+                      totalPV: 0,
+                      ordersCount: 0,
+                      pvStatus: 'normal',
+                      lastOrderDate: null,
+                      sponsor: { id: '', name: '' },
+                      enroller: { id: '', name: '' },
+                      membershipType: 'WA',
+                      fastStart: { daysRemaining: null, status: 'none' },
+                      remainingPGVMonths: null,
+                    }
+                    onMemberClick(sponsorMember)
+                  }
+                }}
+              >
                 <div className="text-xs text-gray-500 mb-1">Sponsor</div>
-                <div className="text-sm font-semibold text-gray-800">
+                <div className="text-sm font-semibold text-gray-800 hover:text-green-600">
                   {member.sponsor.name}
                 </div>
                 <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
                   <span>ID: {member.sponsor.id}</span>
-                  <button onClick={() => copyToClipboard(member.sponsor.id)} className="hover:text-gray-600">
+                  <button onClick={(e) => { e.stopPropagation(); copyToClipboard(member.sponsor!.id) }} className="hover:text-gray-600">
                     <Copy className="h-3 w-3" />
                   </button>
                 </div>
               </div>
             )}
 
-            {member.enroller && (
-              <div className="flex-1 bg-gray-50 rounded-xl p-3">
+            {member.enroller && member.enroller.id && (
+              <div
+                className="flex-1 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+                onClick={() => {
+                  if (onMemberClick && member.enroller) {
+                    const enrollerMember: StructureMember = {
+                      id: member.enroller.id,
+                      name: member.enroller.name,
+                      totalPV: 0,
+                      ordersCount: 0,
+                      pvStatus: 'normal',
+                      lastOrderDate: null,
+                      sponsor: { id: '', name: '' },
+                      enroller: { id: '', name: '' },
+                      membershipType: 'WA',
+                      fastStart: { daysRemaining: null, status: 'none' },
+                      remainingPGVMonths: null,
+                    }
+                    onMemberClick(enrollerMember)
+                  }
+                }}
+              >
                 <div className="text-xs text-gray-500 mb-1">Enroller</div>
-                <div className="text-sm font-semibold text-gray-800">
+                <div className="text-sm font-semibold text-gray-800 hover:text-green-600">
                   {member.enroller.name}
                 </div>
                 <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
                   <span>ID: {member.enroller.id}</span>
-                  <button onClick={() => copyToClipboard(member.enroller.id)} className="hover:text-gray-600">
+                  <button onClick={(e) => { e.stopPropagation(); copyToClipboard(member.enroller!.id) }} className="hover:text-gray-600">
                     <Copy className="h-3 w-3" />
                   </button>
                 </div>
@@ -168,7 +213,7 @@ export function PersonDetailView({
       </div>
 
       {/* ========== SEKCJA 2: DANE MIESIĘCZNE (z selektorem) ========== */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
         {/* Nagłówek z selektorem miesiąca */}
         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
           <div className="flex items-center justify-between">
@@ -319,152 +364,88 @@ export function PersonDetailView({
         </div>
           </div>
 
-          {/* Struktura bezpośrednia i Analiza rangi obok siebie */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Sekcja struktury bezpośredniej */}
-            <div className="bg-gray-50 p-4 rounded-xl">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-lg">👥</span>
-                <h3 className="text-base font-semibold text-gray-800">Struktura bezpośrednia</h3>
-              </div>
-
-              {/* Lista osób w pierwszej linii */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-sm font-semibold text-green-700">
-                      KM
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-800 hover:text-green-600 cursor-pointer">Kowalski Marek</div>
-                      <div className="text-xs text-gray-500">ID: 18123456</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-gray-800">245.00 PV</div>
-                    <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">WA</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-sm font-semibold text-blue-700">
-                      AN
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-800 hover:text-green-600 cursor-pointer">Adamska Nina</div>
-                      <div className="text-xs text-gray-500">ID: 18234567</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-gray-800">128.50 PV</div>
-                    <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs">WC</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-sm font-semibold text-orange-700">
-                      TP
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-800 hover:text-green-600 cursor-pointer">Tomaszewski Piotr</div>
-                      <div className="text-xs text-gray-500">ID: 18345678</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-gray-800">89.00 PV</div>
-                    <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">WA</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-sm font-semibold text-pink-700">
-                      MZ
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-800 hover:text-green-600 cursor-pointer">Mazur Zofia</div>
-                      <div className="text-xs text-gray-500">ID: 18456789</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-gray-800">0.00 PV</div>
-                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">Nieaktywny</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-sm">
-                <span className="text-gray-500">Łącznie w pierwszej linii:</span>
-                <span className="font-semibold text-gray-800">4 osoby • 462.50 PV</span>
-              </div>
+          {/* Sekcja struktury bezpośredniej - pełna szerokość */}
+          <div className="bg-gray-50 p-4 rounded-xl">
+            <div className="mb-4">
+              <h3 className="text-base font-semibold text-gray-800">Struktura bezpośrednia</h3>
             </div>
 
-            {/* Sekcja analizy rangi */}
-            <div className="bg-gray-50 p-4 rounded-xl">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-lg">💎</span>
-                <h3 className="text-base font-semibold text-gray-800">Analiza rangi</h3>
-              </div>
+            {/* Lista osób w pierwszej linii */}
+            <div className="space-y-3">
+              {[
+                { id: '18123456', name: 'Kowalski Marek', totalPV: 245.00, membershipType: 'WA' as const, color: 'green' },
+                { id: '18234567', name: 'Adamska Nina', totalPV: 128.50, membershipType: 'WC' as const, color: 'blue' },
+                { id: '18345678', name: 'Tomaszewski Piotr', totalPV: 89.00, membershipType: 'WA' as const, color: 'orange' },
+                { id: '18456789', name: 'Mazur Zofia', totalPV: 0.00, membershipType: 'WA' as const, color: 'pink' },
+              ].map((person) => {
+                const colorClasses: Record<string, { bg: string; text: string }> = {
+                  green: { bg: 'bg-green-100', text: 'text-green-700' },
+                  blue: { bg: 'bg-blue-100', text: 'text-blue-700' },
+                  orange: { bg: 'bg-orange-100', text: 'text-orange-700' },
+                  pink: { bg: 'bg-pink-100', text: 'text-pink-700' },
+                }
+                const typeColors: Record<string, { bg: string; text: string }> = {
+                  WA: { bg: 'bg-green-100', text: 'text-green-700' },
+                  WC: { bg: 'bg-purple-100', text: 'text-purple-700' },
+                }
+                const isInactive = person.totalPV === 0
 
-              <div className="space-y-4">
-                {/* Aktualna ranga */}
-                <div>
-                  <div className="text-sm text-gray-500 mb-2">Aktualna ranga</div>
-                  <div className="flex items-center gap-3">
-                    <span className="px-4 py-2 bg-white text-gray-700 rounded-full font-semibold">
-                      Silver
-                    </span>
-                    <span className="text-sm text-gray-500">od 3 miesięcy</span>
-                  </div>
-                </div>
+                const handleClick = () => {
+                  if (onMemberClick) {
+                    // Tworzymy tymczasowy obiekt StructureMember
+                    const mockMember: StructureMember = {
+                      id: person.id,
+                      name: person.name,
+                      totalPV: person.totalPV,
+                      ordersCount: 1,
+                      pvStatus: 'normal',
+                      lastOrderDate: new Date(),
+                      sponsor: { id: '', name: '' },
+                      enroller: { id: '', name: '' },
+                      membershipType: person.membershipType,
+                      fastStart: { daysRemaining: null, status: 'none' },
+                      remainingPGVMonths: null,
+                    }
+                    onMemberClick(mockMember)
+                  }
+                }
 
-                {/* Postęp do następnej rangi */}
-                <div>
-                  <div className="text-sm text-gray-500 mb-2">Postęp do rangi Gold</div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="flex-1 bg-gray-200 rounded-full h-3">
-                      <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 h-3 rounded-full" style={{ width: '65%' }}></div>
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">65%</span>
-                  </div>
-                  <div className="text-xs text-gray-500">Brakuje: 350 OV, 2 nowych WA</div>
-                </div>
-
-                {/* Wymagania */}
-                <div>
-                  <div className="text-sm text-gray-500 mb-3">Wymagania Gold</div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">OV osobisty</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{formatPV(member.totalPV)} / 500 PV</span>
-                        {member.totalPV >= 100 ? (
-                          <span className="text-green-500">✓</span>
-                        ) : (
-                          <span className="text-gray-400">○</span>
-                        )}
+                return (
+                  <div
+                    key={person.id}
+                    onClick={handleClick}
+                    className="flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 ${colorClasses[person.color].bg} rounded-full flex items-center justify-center text-sm font-semibold ${colorClasses[person.color].text}`}>
+                        {getInitials(person.name)}
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-800 hover:text-green-600">{person.name}</div>
+                        <div className="text-xs text-gray-500">ID: {person.id}</div>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">OV struktury</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">2,500 / 3,000 PV</span>
-                        <span className="text-gray-400">○</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Aktywni WA w 1. linii</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">4 / 6</span>
-                        <span className="text-gray-400">○</span>
-                      </div>
+                    <div className="text-right">
+                      <div className="font-semibold text-gray-800">{formatPV(person.totalPV)} PV</div>
+                      <span className={`px-2 py-0.5 ${isInactive ? 'bg-gray-100 text-gray-600' : typeColors[person.membershipType].bg + ' ' + typeColors[person.membershipType].text} rounded text-xs`}>
+                        {isInactive ? 'Nieaktywny' : person.membershipType}
+                      </span>
                     </div>
                   </div>
-                </div>
-              </div>
+                )
+              })}
             </div>
+
+            <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-sm">
+              <span className="text-gray-500">Łącznie w pierwszej linii:</span>
+              <span className="font-semibold text-gray-800">4 osoby • 462.50 PV</span>
+            </div>
+          </div>
+
+          {/* Sekcja planera rangi */}
+          <div className="bg-gray-50 rounded-xl p-4 overflow-visible">
+            <h3 className="text-base font-semibold text-gray-800 mb-4">Planowanie rangi</h3>
+            <RankPlanner structureMembers={structureMembers} memberOV={member.totalPV} />
           </div>
         </div>
       </div>
@@ -502,8 +483,7 @@ export function PersonDetailView({
       {/* ========== SEKCJA 4: ZAMÓWIENIA (niezależna) ========== */}
       <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-lg">🛒</span>
-          <h2 className="text-lg font-semibold text-gray-800">Zamówienia ({member.ordersCount})</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Zamówienia</h2>
         </div>
 
         {/* Tabela zamówień */}
