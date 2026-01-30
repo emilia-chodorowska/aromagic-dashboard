@@ -18,7 +18,7 @@ const RANK_REQUIREMENTS = [
 interface PlannedOrder {
   id: string
   description: string
-  value: number
+  value: string
 }
 
 // Dostępne rejestracje do przeniesienia (mock data - w przyszłości z props)
@@ -53,6 +53,7 @@ export function RankPlanner({ structureMembers, memberOV }: RankPlannerProps) {
   const [selectedRankId, setSelectedRankId] = useState<string | null>(null)
   const [legs, setLegs] = useState<LegAssignment[]>([])
   const [isRankDropdownOpen, setIsRankDropdownOpen] = useState(false)
+  const [openLegDropdown, setOpenLegDropdown] = useState<number | null>(null)
   const newOrderInputRef = useRef<HTMLInputElement>(null)
   
   const selectedRank = RANK_REQUIREMENTS.find(r => r.id === selectedRankId)
@@ -99,7 +100,7 @@ export function RankPlanner({ structureMembers, memberOV }: RankPlannerProps) {
           ...l,
           plannedOrders: [
             ...l.plannedOrders,
-            { id: crypto.randomUUID(), description: '', value: 0 }
+            { id: crypto.randomUUID(), description: '', value: '' }
           ]
         }
       }
@@ -108,14 +109,14 @@ export function RankPlanner({ structureMembers, memberOV }: RankPlannerProps) {
     setTimeout(() => newOrderInputRef.current?.focus(), 0)
   }
 
-  const updatePlannedOrder = (legIndex: number, orderId: string, field: 'description' | 'value', value: string | number) => {
+  const updatePlannedOrder = (legIndex: number, orderId: string, field: 'description' | 'value', value: string) => {
     setLegs(prev => prev.map((leg, i) => {
       if (i === legIndex) {
         return {
           ...leg,
           plannedOrders: leg.plannedOrders.map(order =>
             order.id === orderId
-              ? { ...order, [field]: field === 'value' ? (parseFloat(String(value)) || 0) : value }
+              ? { ...order, [field]: value }
               : order
           )
         }
@@ -177,7 +178,7 @@ export function RankPlanner({ structureMembers, memberOV }: RankPlannerProps) {
     }))
   }
 
-  const getPlannedOVTotal = (leg: LegAssignment) => leg.plannedOrders.reduce((sum, o) => sum + o.value, 0)
+  const getPlannedOVTotal = (leg: LegAssignment) => leg.plannedOrders.reduce((sum, o) => sum + (parseFloat(o.value.replace(',', '.')) || 0), 0)
   const getMovedOVTotal = (leg: LegAssignment) => leg.movedRegistrations.reduce((sum, r) => sum + r.pv, 0)
   // Suma OV nogi = OV wybranego WA + planowane zamówienia + przeniesione rejestracje
   const getLegTotalOV = (leg: LegAssignment) => leg.memberOV + getPlannedOVTotal(leg) + getMovedOVTotal(leg)
@@ -197,7 +198,7 @@ export function RankPlanner({ structureMembers, memberOV }: RankPlannerProps) {
     : false
 
   const formatPV = (value: number) =>
-    value.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    value.toLocaleString('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
   // Helper do wyświetlania opisu wymagań rangi
   const getRankDescription = (rank: typeof RANK_REQUIREMENTS[0]) => {
@@ -307,11 +308,10 @@ export function RankPlanner({ structureMembers, memberOV }: RankPlannerProps) {
             return (
               <div
                 key={index}
-                className={`p-4 rounded-lg border transition-colors ${
-                  isLegMet
-                    ? 'bg-green-50 border-green-200'
-                    : 'bg-white border-gray-200'
-                }`}
+                className="p-4 rounded-lg bg-white transition-colors"
+                style={{
+                  border: isLegMet ? '2px solid #22c55e' : '2px solid #e5e7eb'
+                }}
               >
                 {/* Nagłówek nogi */}
                 <div className="flex items-center gap-2 mb-3">
@@ -323,135 +323,191 @@ export function RankPlanner({ structureMembers, memberOV }: RankPlannerProps) {
 
                 {/* Wybór WA + aktualny OV */}
                 <div className="flex items-center gap-3 mb-2">
-                  <select
-                    value={leg.memberId || ''}
-                    onChange={(e) => handleLegAssignment(index, e.target.value)}
-                    className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Wybierz WA...</option>
-                    {structureMembers.map(member => (
-                      <option key={member.id} value={member.id}>
-                        {member.name} ({formatPV(member.totalPV)} OV)
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex-1 relative">
+                    <button
+                      type="button"
+                      onClick={() => setOpenLegDropdown(openLegDropdown === index ? null : index)}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-full text-sm font-medium transition-colors ${
+                        leg.memberId
+                          ? 'bg-green-100 hover:bg-green-200 text-green-800'
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                      }`}
+                    >
+                      <span className="truncate">
+                        {leg.memberName || 'Wybierz WA...'}
+                      </span>
+                      <ChevronDown className={`h-4 w-4 flex-shrink-0 transition-transform ${openLegDropdown === index ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {/* Dropdown */}
+                    {openLegDropdown === index && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-10"
+                          onClick={() => setOpenLegDropdown(null)}
+                        />
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl border border-gray-200 shadow-lg z-20 py-2 max-h-48 overflow-y-auto">
+                          {structureMembers.map(member => (
+                            <button
+                              key={member.id}
+                              type="button"
+                              onClick={() => {
+                                handleLegAssignment(index, member.id)
+                                setOpenLegDropdown(null)
+                              }}
+                              className="w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center justify-between"
+                            >
+                              <div>
+                                <div className="text-sm font-medium text-gray-800">{member.name}</div>
+                                <div className="text-xs text-gray-500">{formatPV(member.totalPV)} OV</div>
+                              </div>
+                              {leg.memberId === member.id && (
+                                <Check className="h-4 w-4 text-green-600" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
                   <div className="text-right min-w-[90px]">
                     <div className="text-sm text-gray-600">{formatPV(leg.memberOV)} OV</div>
                     <div className="text-xs text-gray-400">aktualny OV</div>
                   </div>
                 </div>
 
-                {/* Przeniesione rejestracje */}
-                <div className="space-y-2 mt-3 bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">Rejestracje do przeniesienia:</span>
-                  </div>
+                {/* Rejestracje do przeniesienia */}
+                <div className={`space-y-2 mt-3 rounded-lg p-3 ${isLegMet ? 'bg-white' : 'bg-white/60'}`}>
+                  <span className="text-xs text-gray-500 block mb-1 px-5">Osoby do przeniesienia:</span>
 
                   {/* Dropdown do wyboru rejestracji */}
                   {getAvailableRegistrations().length > 0 && (
-                    <select
-                      value=""
-                      onChange={(e) => {
-                        if (e.target.value) {
-                          addMovedRegistration(index, e.target.value)
-                          e.target.value = ''
-                        }
-                      }}
-                      className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="">Wybierz rejestrację do przeniesienia...</option>
-                      {getAvailableRegistrations().map(reg => (
-                        <option key={reg.id} value={reg.id}>
-                          {reg.name} ({formatPV(reg.pv)} PV) - {reg.date}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="px-5">
+                      <select
+                        value=""
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            addMovedRegistration(index, e.target.value)
+                            e.target.value = ''
+                          }
+                        }}
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="">Wybierz osobę do przeniesienia...</option>
+                        {getAvailableRegistrations().map(reg => (
+                          <option key={reg.id} value={reg.id}>
+                            {reg.name} ({formatPV(reg.pv)} PV)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   )}
 
                   {/* Lista przeniesionych rejestracji */}
                   {leg.movedRegistrations.map((reg) => (
-                    <div key={reg.id} className="group flex items-center justify-between p-2 bg-white border border-gray-200 rounded text-xs">
-                      <span className="font-medium text-gray-700">{reg.name}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-600">{formatPV(reg.pv)} PV</span>
-                        <button
-                          type="button"
-                          onClick={() => removeMovedRegistration(index, reg.id)}
-                          className="p-1 text-gray-400 hover:text-red-500 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </button>
+                    <div key={reg.id} className="group relative px-5">
+                      <div className="flex items-center justify-between p-2 bg-white border border-gray-200 rounded text-xs">
+                        <span className="font-medium text-gray-700">{reg.name}</span>
+                        <span className="text-gray-500">{formatPV(reg.pv)} PV</span>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => removeMovedRegistration(index, reg.id)}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-300 hover:text-red-400 cursor-pointer opacity-0 group-hover:opacity-100 transition-all"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
                     </div>
                   ))}
 
                   {leg.movedRegistrations.length > 0 && (
-                    <div className="flex justify-between text-xs text-blue-600">
-                      <span>Suma przeniesionych:</span>
-                      <span>{formatPV(getMovedOVTotal(leg))} PV</span>
+                    <div className="px-5">
+                      <div className="flex justify-between text-xs text-blue-600 px-2 py-1 pt-1 mt-1 border-t border-gray-100">
+                        <span>Suma:</span>
+                        <span>{formatPV(getMovedOVTotal(leg))} PV</span>
+                      </div>
                     </div>
                   )}
                 </div>
 
                 {/* Planowane zamówienia */}
-                <div className="space-y-2 mt-3 bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">Planowane zamówienia:</span>
+                <div className={`space-y-2 mt-3 rounded-lg p-3 ${isLegMet ? 'bg-white' : 'bg-white/60'}`}>
+                  <span className="text-xs text-gray-500 block mb-1 px-5">Planowane zamówienia:</span>
+                  <div className="px-5">
                     <button
                       type="button"
                       onClick={() => addPlannedOrder(index)}
-                      className="p-0.5 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors"
+                      className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs text-gray-500 text-left hover:border-blue-400 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors flex items-center gap-1"
                     >
                       <Plus className="h-3.5 w-3.5" />
+                      Dodaj zamówienie...
                     </button>
                   </div>
                   {leg.plannedOrders.map((order, orderIndex) => (
-                    <div key={order.id} className="group flex items-center gap-2">
-                      <input
-                        ref={orderIndex === leg.plannedOrders.length - 1 ? newOrderInputRef : null}
-                        type="text"
-                        placeholder="Opis zamówienia"
-                        value={order.description}
-                        onChange={(e) => updatePlannedOrder(index, order.id, 'description', e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault()
-                            addPlannedOrder(index)
-                          }
-                        }}
-                        className="flex-1 px-2 py-1.5 bg-white border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                      <div className="relative">
+                    <div key={order.id} className="group relative px-5">
+                      <div className="flex items-center gap-2 p-2 bg-white border border-gray-200 rounded">
                         <input
-                          type="number"
-                          step="any"
-                          min="0"
-                          placeholder="0"
-                          value={order.value || ''}
-                          onChange={(e) => updatePlannedOrder(index, order.id, 'value', e.target.value)}
+                          ref={orderIndex === leg.plannedOrders.length - 1 ? newOrderInputRef : null}
+                          type="text"
+                          placeholder="Opis"
+                          value={order.description}
+                          onChange={(e) => updatePlannedOrder(index, order.id, 'description', e.target.value)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                               e.preventDefault()
                               addPlannedOrder(index)
                             }
                           }}
-                          className="w-20 px-2 py-1.5 pr-7 bg-white border border-gray-200 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="flex-1 bg-transparent text-xs text-gray-700 font-medium focus:outline-none"
                         />
-                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">PV</span>
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="text"
+                            inputMode="decimal"
+                            placeholder="0"
+                            value={order.value}
+                            onChange={(e) => {
+                              const val = e.target.value
+                              if (val === '' || /^[\d,]*$/.test(val)) {
+                                updatePlannedOrder(index, order.id, 'value', val)
+                              }
+                            }}
+                            onBlur={() => {
+                              const num = parseFloat(order.value.replace(',', '.'))
+                              if (!isNaN(num) && num > 0) {
+                                updatePlannedOrder(index, order.id, 'value', num.toFixed(1).replace('.', ','))
+                              }
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault()
+                                const num = parseFloat(order.value.replace(',', '.'))
+                                if (!isNaN(num) && num > 0) {
+                                  updatePlannedOrder(index, order.id, 'value', num.toFixed(1).replace('.', ','))
+                                }
+                                addPlannedOrder(index)
+                              }
+                            }}
+                            className="w-16 bg-transparent text-xs text-gray-500 text-right focus:outline-none"
+                          />
+                          <span className="text-xs text-gray-500">PV</span>
+                        </div>
                       </div>
                       <button
                         type="button"
                         onClick={() => removePlannedOrder(index, order.id)}
-                        className="p-1 text-gray-400 hover:text-red-500 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-300 hover:text-red-400 cursor-pointer opacity-0 group-hover:opacity-100 transition-all"
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3 w-3" />
                       </button>
                     </div>
                   ))}
                   {leg.plannedOrders.length > 0 && (
-                    <div className="flex justify-between text-xs text-blue-600">
-                      <span>Suma planowanych:</span>
-                      <span>{formatPV(getPlannedOVTotal(leg))} PV</span>
+                    <div className="px-5">
+                      <div className="flex justify-between text-xs text-blue-600 px-2 py-1 pt-1 mt-1 border-t border-gray-100">
+                        <span>Suma:</span>
+                        <span>{formatPV(getPlannedOVTotal(leg))} PV</span>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -479,10 +535,13 @@ export function RankPlanner({ structureMembers, memberOV }: RankPlannerProps) {
               </div>
             )
           })}
-          </div>
+
 
           {/* Podsumowanie */}
-          <div className={`p-4 rounded-lg border-2 ${isOVMet ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'}`}>
+          <div
+            className={`p-4 rounded-lg border-2 ${isOVMet ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'}`}
+            style={{ gridColumn: `span ${Math.min(selectedRank.legs, 3)}` }}
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {isOVMet ? (
@@ -542,6 +601,7 @@ export function RankPlanner({ structureMembers, memberOV }: RankPlannerProps) {
                 * Nogi muszą być osobiście zapisane (personally enrolled)
               </div>
             )}
+          </div>
           </div>
         </div>
       )}
