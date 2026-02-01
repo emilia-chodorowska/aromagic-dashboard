@@ -76,12 +76,12 @@ export function PersonDetailView({
   const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* ========== SEKCJA 1: INFORMACJE O OSOBIE (statyczne) ========== */}
       <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-sm">
-        {/* Górny pasek: Ścieżka nawigacji */}
+        {/* Górny pasek: Ścieżka nawigacji (wysokość dopasowana do MetricsRow) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 pb-4 border-b border-gray-100">
-          <div className="flex items-center gap-2 text-sm flex-wrap">
+          <div className="flex items-center gap-2 text-sm flex-wrap py-2">
             {(() => {
               const path = member.path || []
               const shouldCollapse = path.length > 3 && !isPathExpanded
