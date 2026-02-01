@@ -364,11 +364,13 @@ export function PersonDetailView({
         </div>
           </div>
 
-          {/* Sekcja struktury bezpośredniej - pełna szerokość */}
-          <div className="bg-gray-50 p-4 rounded-xl">
-            <div className="mb-4">
-              <h3 className="text-base font-semibold text-gray-800">Struktura bezpośrednia</h3>
-            </div>
+          {/* Grid: Struktura bezpośrednia + pusta karta */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Sekcja struktury bezpośredniej */}
+            <div className="bg-gray-50 p-4 rounded-xl">
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-gray-800">Struktura bezpośrednia</h3>
+              </div>
 
             {/* Lista osób w pierwszej linii */}
             <div className="space-y-3">
@@ -436,9 +438,18 @@ export function PersonDetailView({
               })}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-sm">
-              <span className="text-gray-500">Łącznie w pierwszej linii:</span>
-              <span className="font-semibold text-gray-800">4 osoby • 462.50 PV</span>
+              <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-sm">
+                <span className="text-gray-500">Łącznie w pierwszej linii:</span>
+                <span className="font-semibold text-gray-800">4 osoby • 462.50 PV</span>
+              </div>
+            </div>
+
+            {/* Pusta karta - placeholder */}
+            <div className="bg-gray-50 p-4 rounded-xl">
+              <h3 className="text-base font-semibold text-gray-800 mb-4">Do zaimplementowania</h3>
+              <div className="h-48 flex items-center justify-center text-gray-400">
+                Miejsce na nową funkcjonalność
+              </div>
             </div>
           </div>
 
@@ -480,60 +491,70 @@ export function PersonDetailView({
         </div>
       </div>
 
-      {/* ========== SEKCJA 4: ZAMÓWIENIA (niezależna) ========== */}
-      <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-        <div className="flex items-center gap-2 mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Zamówienia</h2>
-        </div>
+      {/* ========== SEKCJA 4: ZAMÓWIENIA + PUSTA KARTA ========== */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-lg font-semibold text-gray-800">Zamówienia</h2>
+          </div>
 
-        {/* Tabela zamówień */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="text-left text-sm text-gray-500 border-b">
-                <th className="pb-3 font-medium">Nr zamówienia</th>
-                <th className="pb-3 font-medium">Data</th>
-                <th className="pb-3 font-medium text-right">Objętość PV</th>
-                <th className="pb-3 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b hover:bg-gray-50">
-                <td className="py-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-400">▼</span>
-                    <span className="font-medium">174385478</span>
-                    <Copy className="h-3 w-3 text-gray-400 cursor-pointer hover:text-gray-600" />
-                  </div>
-                </td>
-                <td className="py-3 text-gray-600">04.01.2026</td>
-                <td className="py-3 text-right text-orange-500 font-medium">{formatPV(member.totalPV)}</td>
-                <td className="py-3">
-                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
-                    Opłacone
-                  </span>
-                </td>
-              </tr>
-              {member.ordersCount > 1 && (
+          {/* Tabela zamówień */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-sm text-gray-500 border-b">
+                  <th className="pb-3 font-medium">Nr zamówienia</th>
+                  <th className="pb-3 font-medium">Data</th>
+                  <th className="pb-3 font-medium text-right">Objętość PV</th>
+                  <th className="pb-3 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody>
                 <tr className="border-b hover:bg-gray-50">
                   <td className="py-3">
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400">▼</span>
-                      <span className="font-medium">173740691</span>
+                      <span className="font-medium">174385478</span>
                       <Copy className="h-3 w-3 text-gray-400 cursor-pointer hover:text-gray-600" />
                     </div>
                   </td>
-                  <td className="py-3 text-gray-600">16.12.2025</td>
-                  <td className="py-3 text-right text-gray-500">-</td>
+                  <td className="py-3 text-gray-600">04.01.2026</td>
+                  <td className="py-3 text-right text-orange-500 font-medium">{formatPV(member.totalPV)}</td>
                   <td className="py-3">
                     <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
                       Opłacone
                     </span>
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
+                {member.ordersCount > 1 && (
+                  <tr className="border-b hover:bg-gray-50">
+                    <td className="py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-400">▼</span>
+                        <span className="font-medium">173740691</span>
+                        <Copy className="h-3 w-3 text-gray-400 cursor-pointer hover:text-gray-600" />
+                      </div>
+                    </td>
+                    <td className="py-3 text-gray-600">16.12.2025</td>
+                    <td className="py-3 text-right text-gray-500">-</td>
+                    <td className="py-3">
+                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
+                        Opłacone
+                      </span>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Pusta karta - placeholder */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Do zaimplementowania</h2>
+          <div className="h-48 flex items-center justify-center text-gray-400">
+            Miejsce na nową funkcjonalność
+          </div>
         </div>
       </div>
     </div>
