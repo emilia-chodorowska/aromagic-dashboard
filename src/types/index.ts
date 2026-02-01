@@ -70,6 +70,7 @@ export interface StructureMember {
   membershipType: MembershipType
   fastStart: FastStart
   remainingPGVMonths: number | null
+  path?: User[] // ścieżka od głównego węzła do tej osoby
 }
 
 export type FilterTabKey =

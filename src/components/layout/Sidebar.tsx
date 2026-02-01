@@ -36,12 +36,15 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
     >
       {/* Logo */}
       <div className="px-4 py-7 flex items-center justify-between flex-shrink-0">
-        <a href="#" className="text-gray-800 flex items-center space-x-2">
+        <button
+          onClick={() => onViewChange('dashboard')}
+          className="text-gray-800 flex items-center space-x-2 hover:opacity-80 transition-opacity"
+        >
           <Shield className="h-8 w-8 text-purple-600" />
           {!collapsed && (
             <span className="text-2xl font-bold">AromaStats</span>
           )}
-        </a>
+        </button>
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="hidden md:block p-1 rounded-full hover:bg-gray-100"

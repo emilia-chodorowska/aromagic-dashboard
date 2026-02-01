@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, Copy, Star, Zap, TrendingUp, BarChart3, User, CheckCircle, MinusCircle, ChevronLeft, ChevronRight, Settings, Info } from 'lucide-react'
+import { Copy, Star, Zap, TrendingUp, BarChart3, User, CheckCircle, MinusCircle, ChevronLeft, ChevronRight, Settings, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RankPlanner } from './RankPlanner'
 import type { StructureMember } from '@/types'
@@ -24,6 +24,7 @@ export function PersonDetailView({
   onMemberClick,
 }: PersonDetailViewProps) {
   const [isInfoExpanded, setIsInfoExpanded] = useState(false)
+  const [isPathExpanded, setIsPathExpanded] = useState(false)
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
   }
@@ -78,18 +79,81 @@ export function PersonDetailView({
 
   return (
     <div className="space-y-6">
-      {/* Przycisk powrotu */}
-      <Button
-        variant="ghost"
-        onClick={onBack}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Powrót do struktury
-      </Button>
-
       {/* ========== SEKCJA 1: INFORMACJE O OSOBIE (statyczne) ========== */}
       <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-sm">
+        {/* Górny pasek: Ścieżka nawigacji */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 pb-4 border-b border-gray-100">
+          <div className="flex items-center gap-2 text-sm flex-wrap">
+            {(() => {
+              const path = member.path || []
+              const shouldCollapse = path.length > 3 && !isPathExpanded
+
+              // Funkcja do renderowania pojedynczego węzła
+              const renderNode = (node: { id: string; name: string }, index: number) => (
+                <span key={node.id} className="flex items-center gap-2">
+                  {index > 0 && <span className="text-gray-400">&gt;</span>}
+                  <button
+                    onClick={() => {
+                      if (onMemberClick) {
+                        const nodeMember: StructureMember = {
+                          id: node.id,
+                          name: node.name,
+                          totalPV: 0,
+                          ordersCount: 0,
+                          pvStatus: 'normal',
+                          lastOrderDate: null,
+                          sponsor: { id: '', name: '' },
+                          enroller: { id: '', name: '' },
+                          membershipType: 'WA',
+                          fastStart: { daysRemaining: null, status: 'none' },
+                          remainingPGVMonths: null,
+                          path: member.path?.slice(0, index),
+                        }
+                        onMemberClick(nodeMember)
+                      }
+                    }}
+                    className="text-gray-500 hover:text-green-600 hover:underline transition-colors"
+                  >
+                    {node.name}
+                  </button>
+                </span>
+              )
+
+              if (shouldCollapse) {
+                // Skrócona wersja: pierwszy > ... > przedostatni
+                return (
+                  <>
+                    {renderNode(path[0], 0)}
+                    <span className="text-gray-400">&gt;</span>
+                    <button
+                      onClick={() => setIsPathExpanded(true)}
+                      className="text-gray-400 hover:text-green-600 transition-colors px-1"
+                      title="Kliknij aby rozwinąć pełną ścieżkę"
+                    >
+                      ...
+                    </button>
+                    <span className="text-gray-400">&gt;</span>
+                    {renderNode(path[path.length - 1], path.length - 1)}
+                  </>
+                )
+              }
+
+              // Pełna wersja
+              return path.map((node, index) => renderNode(node, index))
+            })()}
+            {member.path && member.path.length > 0 && <span className="text-gray-400">&gt;</span>}
+            <span className="font-medium text-gray-800">{member.name}</span>
+            {isPathExpanded && member.path && member.path.length > 3 && (
+              <button
+                onClick={() => setIsPathExpanded(false)}
+                className="text-xs text-gray-400 hover:text-gray-600 ml-2"
+              >
+                (zwiń)
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className="flex items-start sm:items-center gap-3 sm:gap-4">
           {/* Avatar */}
           <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 rounded-full flex items-center justify-center text-lg sm:text-xl font-semibold text-gray-600 flex-shrink-0">

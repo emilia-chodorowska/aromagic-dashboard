@@ -28,6 +28,14 @@ function App() {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
   }
 
+  const handleViewChange = (view: string) => {
+    setActiveView(view)
+    // Resetuj selectedMember przy zmianie widoku (w tym przy kliknięciu logo)
+    if (view === 'dashboard') {
+      setSelectedMember(null)
+    }
+  }
+
   // Znajdź osobę w strukturze po ID i otwórz jej widok szczegółowy
   const handlePersonLinkClick = (person: WAMember) => {
     // Szukaj w strukturze
@@ -80,7 +88,7 @@ function App() {
 
   return (
     <div className="flex h-screen bg-white">
-      <Sidebar activeView={activeView} onViewChange={setActiveView} />
+      <Sidebar activeView={activeView} onViewChange={handleViewChange} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">

@@ -57,6 +57,10 @@ export const structureMembers: StructureMember[] = [
     membershipType: 'WC',
     fastStart: { daysRemaining: 57, status: 'active' },
     remainingPGVMonths: 12,
+    path: [
+      { id: '14769732', name: 'Chodorowska Emilia' },
+      { id: '15129265', name: 'Sybal Wioletta' },
+    ],
   },
   {
     id: '17544111',
@@ -70,6 +74,11 @@ export const structureMembers: StructureMember[] = [
     membershipType: 'WC',
     fastStart: { daysRemaining: null, status: 'none' },
     remainingPGVMonths: 3,
+    path: [
+      { id: '14769732', name: 'Chodorowska Emilia' },
+      { id: '15156870', name: 'Kojder Martyna' },
+      { id: '16569186', name: 'Kojder Maria' },
+    ],
   },
   {
     id: '18096522',
@@ -174,6 +183,27 @@ export const structureMembers: StructureMember[] = [
     membershipType: 'WA',
     fastStart: { daysRemaining: null, status: 'none' },
     remainingPGVMonths: null,
+  },
+  {
+    id: '19000001',
+    name: 'Testowa Długa Ścieżka',
+    ordersCount: 1,
+    totalPV: 150.00,
+    pvStatus: 'normal',
+    lastOrderDate: new Date('2026-01-20'),
+    sponsor: { id: '18900006', name: 'Poziom Szósty' },
+    enroller: { id: '18900006', name: 'Poziom Szósty' },
+    membershipType: 'WA',
+    fastStart: { daysRemaining: null, status: 'none' },
+    remainingPGVMonths: null,
+    path: [
+      { id: '14769732', name: 'Chodorowska Emilia' },
+      { id: '18900002', name: 'Poziom Drugi' },
+      { id: '18900003', name: 'Poziom Trzeci' },
+      { id: '18900004', name: 'Poziom Czwarty' },
+      { id: '18900005', name: 'Poziom Piąty' },
+      { id: '18900006', name: 'Poziom Szósty' },
+    ],
   },
 ]
 
