@@ -6,7 +6,6 @@ import type { StructureMember } from '@/types'
 
 interface PersonDetailViewProps {
   member: StructureMember
-  onBack: () => void
   currentMonth: Date
   onPreviousMonth: () => void
   onNextMonth: () => void
@@ -16,7 +15,6 @@ interface PersonDetailViewProps {
 
 export function PersonDetailView({
   member,
-  onBack,
   currentMonth,
   onPreviousMonth,
   onNextMonth,

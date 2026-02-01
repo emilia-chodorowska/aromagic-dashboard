@@ -123,7 +123,6 @@ function App() {
               <div className="max-w-[1600px] mx-auto">
                 <PersonDetailView
                   member={selectedMember}
-                  onBack={() => setSelectedMember(null)}
                   currentMonth={currentMonth}
                   onPreviousMonth={handlePreviousMonth}
                   onNextMonth={handleNextMonth}
