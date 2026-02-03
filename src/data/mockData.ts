@@ -241,3 +241,19 @@ export const filterTabs: FilterTab[] = [
   { key: 'personally', label: 'Zapisani osobiście' },
   { key: 'newMembers', label: 'Nowi członkowie' },
 ]
+
+// Dane do wykresu statystyk miesięcznych (OV i Team LRP)
+export const monthlyStatsData = [
+  { month: 'Lut', ov: 3200, teamLrp: 2400 },
+  { month: 'Mar', ov: 3850, teamLrp: 2900 },
+  { month: 'Kwi', ov: 4100, teamLrp: 3100 },
+  { month: 'Maj', ov: 3600, teamLrp: 2700 },
+  { month: 'Cze', ov: 4500, teamLrp: 3400 },
+  { month: 'Lip', ov: 4200, teamLrp: 3200 },
+  { month: 'Sie', ov: 3900, teamLrp: 2950 },
+  { month: 'Wrz', ov: 4800, teamLrp: 3600 },
+  { month: 'Paź', ov: 5100, teamLrp: 3850 },
+  { month: 'Lis', ov: 5400, teamLrp: 4100 },
+  { month: 'Gru', ov: 5200, teamLrp: 3950 },
+  { month: 'Sty', ov: 5561, teamLrp: 4189 },
+]

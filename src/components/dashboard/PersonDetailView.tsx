@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Copy, Star, Zap, TrendingUp, BarChart3, User, CheckCircle, MinusCircle, ChevronLeft, ChevronRight, Settings, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RankPlanner } from './RankPlanner'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { monthlyStatsData } from '@/data/mockData'
 import type { StructureMember } from '@/types'
 
 interface PersonDetailViewProps {
@@ -535,25 +537,83 @@ export function PersonDetailView({
           <h2 className="text-lg font-semibold text-gray-800">Statystyki miesięczne</h2>
           <div className="flex items-center gap-2">
             <button className="px-3 py-1 bg-green-500 text-white rounded-full text-sm">OV</button>
-            <button className="px-3 py-1 bg-white border border-green-500 text-green-600 rounded-full text-sm">
+            <button className="px-3 py-1 bg-white border border-purple-500 text-purple-600 rounded-full text-sm">
               Team LRP
             </button>
           </div>
         </div>
 
-        {/* Placeholder dla wykresu */}
-        <div className="h-48 bg-gradient-to-r from-green-50 to-purple-50 rounded-xl flex items-center justify-center text-gray-400">
-          Wykres statystyk miesięcznych (do zaimplementowania)
+        {/* Wykres */}
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={monthlyStatsData}
+              margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id="colorOv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorLrp" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis
+                dataKey="month"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#9ca3af', fontSize: 12 }}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#9ca3af', fontSize: 12 }}
+                tickFormatter={(value) => `${(value / 1000).toFixed(1)}k`}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'white',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                }}
+                formatter={(value, name) => [
+                  `${Number(value).toLocaleString('pl-PL')} PV`,
+                  name === 'ov' ? 'OV' : 'Team LRP',
+                ]}
+                labelStyle={{ fontWeight: 600, marginBottom: 4 }}
+              />
+              <Area
+                type="monotone"
+                dataKey="ov"
+                stroke="#22c55e"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorOv)"
+              />
+              <Area
+                type="monotone"
+                dataKey="teamLrp"
+                stroke="#a855f7"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorLrp)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
 
         {/* Legenda */}
         <div className="flex items-center justify-center gap-6 mt-4 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-            <span className="text-gray-600">OV</span>
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span className="text-gray-600">OV (Organization Volume)</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-purple-400 rounded-full"></div>
+            <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
             <span className="text-gray-600">Team LRP</span>
           </div>
         </div>
