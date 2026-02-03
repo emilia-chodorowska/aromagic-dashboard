@@ -9,8 +9,10 @@ import {
   ChevronRight,
   Shield,
   LogOut,
+  Type,
 } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { useFont } from '@/contexts/FontContext'
 
 interface SidebarProps {
   activeView: string
@@ -26,6 +28,7 @@ const menuItems = [
 
 export function Sidebar({ activeView, onViewChange }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
+  const { font, setFont } = useFont()
 
   return (
     <aside
@@ -81,8 +84,58 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
         })}
       </nav>
 
+      {/* Font Switcher */}
+      <div className="px-4 py-2 border-t border-gray-200">
+        <div className={cn("flex items-center", collapsed ? "justify-center" : "justify-between")}>
+          {!collapsed && (
+            <span className="text-xs text-gray-500 flex items-center gap-1">
+              <Type className="w-3 h-3" />
+              Czcionka
+            </span>
+          )}
+          <div className="flex gap-1">
+            <button
+              onClick={() => setFont('system')}
+              className={cn(
+                "px-2 py-1 text-xs rounded transition-colors",
+                font === 'system'
+                  ? "bg-purple-100 text-purple-700 font-medium"
+                  : "text-gray-500 hover:bg-gray-100"
+              )}
+              title="Systemowa"
+            >
+              {collapsed ? 'S' : 'Sys'}
+            </button>
+            <button
+              onClick={() => setFont('poppins')}
+              className={cn(
+                "px-2 py-1 text-xs rounded transition-colors",
+                font === 'poppins'
+                  ? "bg-purple-100 text-purple-700 font-medium"
+                  : "text-gray-500 hover:bg-gray-100"
+              )}
+              title="Poppins"
+            >
+              {collapsed ? 'P' : 'Pop'}
+            </button>
+            <button
+              onClick={() => setFont('sanfrancisco')}
+              className={cn(
+                "px-2 py-1 text-xs rounded transition-colors",
+                font === 'sanfrancisco'
+                  ? "bg-purple-100 text-purple-700 font-medium"
+                  : "text-gray-500 hover:bg-gray-100"
+              )}
+              title="San Francisco"
+            >
+              {collapsed ? 'SF' : 'SF'}
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* User Info */}
-      <div className="p-4 mt-auto border-t border-gray-200 flex-shrink-0">
+      <div className="p-4 border-t border-gray-200 flex-shrink-0">
         <div className="flex items-center space-x-4">
           <Avatar className="h-10 w-10">
             <AvatarFallback className="bg-purple-600 text-white font-semibold">

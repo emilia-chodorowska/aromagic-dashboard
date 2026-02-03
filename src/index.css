@@ -32,3 +32,11 @@ body {
   color: var(--color-foreground);
   font-family: system-ui, -apple-system, sans-serif;
 }
+
+body.font-poppins {
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+}
+
+body.font-sanfrancisco {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+}
