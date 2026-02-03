@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Sidebar } from '@/components/layout'
 import { MetricsRow, FilterSection, StructureTable, PersonDetailView } from '@/components/dashboard'
+import { PricingView } from '@/components/pricing'
 import { currentUser, dashboardMetrics, structureMembers, filterTabs } from '@/data/mockData'
 import type { StructureMember } from '@/types'
 
@@ -141,6 +142,12 @@ function App() {
                 <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm text-center text-gray-500">
                   Sekcja Pricing - do zaimplementowania
                 </div>
+              </div>
+            )}
+
+            {activeView === 'price-changes' && (
+              <div className="max-w-[1600px] mx-auto">
+                <PricingView />
               </div>
             )}
 

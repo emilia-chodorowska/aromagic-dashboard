@@ -91,3 +91,13 @@ export interface FilterTag {
   id: string
   label: string
 }
+
+export interface PriceChange {
+  itemId: string
+  productName: string
+  oldPrice: number
+  newPrice: number
+  differencePln: number
+  changePercent: number
+  changeDate: string
+}

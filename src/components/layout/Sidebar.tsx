@@ -10,6 +10,7 @@ import {
   Shield,
   LogOut,
   Type,
+  TrendingUp,
 } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useFont } from '@/contexts/FontContext'
@@ -22,6 +23,7 @@ interface SidebarProps {
 const menuItems = [
   { id: 'dashboard', label: 'Pulpit', icon: LayoutDashboard },
   { id: 'pricing', label: 'Pricing', icon: DollarSign },
+  { id: 'price-changes', label: 'Zmiany cen', icon: TrendingUp },
   { id: 'calculator', label: 'Kalkulacje', icon: Calculator },
   { id: 'settings', label: 'Ustawienia', icon: Settings },
 ]
