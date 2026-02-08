@@ -8,7 +8,7 @@ export function PricingView() {
     <div className="space-y-6">
       {/* Nagłówek */}
       <div className="mb-2">
-        <h1 className="text-2xl font-bold text-gray-800">Zmiany cen produktów</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Zmiany cen produktów <span className="text-base font-normal text-gray-500">(ceny hurtowe z VAT)</span></h1>
         <p className="text-gray-500 text-sm mt-1">
           Ostatnia aktualizacja: {priceChangesData[0]?.changeDate || 'brak danych'}
         </p>
