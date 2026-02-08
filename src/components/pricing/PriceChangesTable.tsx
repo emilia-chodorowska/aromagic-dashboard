@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { PriceChange } from '@/types'
 
 interface PriceChangesTableProps {
@@ -15,6 +15,8 @@ export function PriceChangesTable({ data }: PriceChangesTableProps) {
   const [filter, setFilter] = useState<FilterType>('all')
   const [sortKey, setSortKey] = useState<SortKey>('changePercent')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [page, setPage] = useState(0)
+  const pageSize = 50
 
   const formatPln = (value: number) =>
     value.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -55,6 +57,9 @@ export function PriceChangesTable({ data }: PriceChangesTableProps) {
     return result
   }, [data, searchTerm, filter, sortKey, sortDirection])
 
+  const totalPages = Math.ceil(filteredAndSortedData.length / pageSize)
+  const paginatedData = filteredAndSortedData.slice(page * pageSize, (page + 1) * pageSize)
+
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
@@ -88,7 +93,7 @@ export function PriceChangesTable({ data }: PriceChangesTableProps) {
                 type="text"
                 placeholder="Szukaj produktu..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value); setPage(0) }}
                 className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
@@ -96,7 +101,7 @@ export function PriceChangesTable({ data }: PriceChangesTableProps) {
             {/* Filtry */}
             <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
               <button
-                onClick={() => setFilter('all')}
+                onClick={() => { setFilter('all'); setPage(0) }}
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   filter === 'all'
                     ? 'bg-white text-gray-800 shadow-sm'
@@ -106,7 +111,7 @@ export function PriceChangesTable({ data }: PriceChangesTableProps) {
                 Wszystkie
               </button>
               <button
-                onClick={() => setFilter('increases')}
+                onClick={() => { setFilter('increases'); setPage(0) }}
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   filter === 'increases'
                     ? 'bg-red-100 text-red-700'
@@ -116,7 +121,7 @@ export function PriceChangesTable({ data }: PriceChangesTableProps) {
                 Wzrosty
               </button>
               <button
-                onClick={() => setFilter('decreases')}
+                onClick={() => { setFilter('decreases'); setPage(0) }}
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   filter === 'decreases'
                     ? 'bg-green-100 text-green-700'
@@ -187,7 +192,7 @@ export function PriceChangesTable({ data }: PriceChangesTableProps) {
             </tr>
           </thead>
           <tbody>
-            {filteredAndSortedData.slice(0, 100).map((item, index) => {
+            {paginatedData.map((item, index) => {
               const isIncrease = item.changePercent > 0.5
               const isDecrease = item.changePercent < -0.5
 
@@ -231,9 +236,28 @@ export function PriceChangesTable({ data }: PriceChangesTableProps) {
         </table>
       </div>
 
-      {filteredAndSortedData.length > 100 && (
-        <div className="p-4 text-center text-sm text-gray-500 border-t">
-          Wyświetlono 100 z {filteredAndSortedData.length} wyników. Użyj wyszukiwarki aby zawęzić listę.
+      {totalPages > 1 && (
+        <div className="p-4 flex items-center justify-between border-t border-gray-200">
+          <span className="text-sm text-gray-500">
+            {page * pageSize + 1}–{Math.min((page + 1) * pageSize, filteredAndSortedData.length)} z {filteredAndSortedData.length}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(p => p - 1)}
+              disabled={page === 0}
+              className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-4 h-4" /> Prev
+            </button>
+            <span className="text-sm text-gray-600 px-2">{page + 1} / {totalPages}</span>
+            <button
+              onClick={() => setPage(p => p + 1)}
+              disabled={page >= totalPages - 1}
+              className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
     </div>
