@@ -58,6 +58,8 @@ export interface FastStart {
   status: 'active' | 'expiring' | 'none'
 }
 
+export type OrderType = 'lrp' | 'internet'
+
 export interface StructureMember {
   id: string
   name: string
@@ -65,6 +67,7 @@ export interface StructureMember {
   totalPV: number
   pvStatus: 'normal' | 'warning' | 'success'
   lastOrderDate: Date | null
+  orderType: OrderType
   sponsor: User
   enroller: User
   membershipType: MembershipType

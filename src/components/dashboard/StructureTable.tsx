@@ -56,7 +56,9 @@ export function StructureTable({ members, onMemberClick }: StructureTableProps) 
       </TableHeader>
       <TableBody>
         {members.map((member) => (
-          <TableRow key={member.id}>
+          <TableRow
+            key={member.id}
+          >
             <TableCell>
               <div>
                 <button
@@ -77,8 +79,16 @@ export function StructureTable({ members, onMemberClick }: StructureTableProps) 
               </div>
             </TableCell>
             <TableCell>{member.ordersCount}</TableCell>
-            <TableCell className={cn(getPVClassName(member.pvStatus))}>
-              {formatPV(member.totalPV)}
+            <TableCell>
+              {member.orderType === 'internet' ? (
+                <span className="inline-flex items-center rounded-full bg-[#eff6ff] px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+                  {formatPV(member.totalPV)}
+                </span>
+              ) : (
+                <span className={cn(getPVClassName(member.pvStatus))}>
+                  {formatPV(member.totalPV)}
+                </span>
+              )}
             </TableCell>
             <TableCell>{formatDate(member.lastOrderDate)}</TableCell>
             <TableCell>

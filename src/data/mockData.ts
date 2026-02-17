@@ -53,6 +53,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 197.00,
     pvStatus: 'success',
     lastOrderDate: new Date('2026-01-26'),
+    orderType: 'internet',
     sponsor: { id: '15129265', name: 'Sybal Wioletta' },
     enroller: { id: '15129265', name: 'Sybal Wioletta' },
     membershipType: 'WC',
@@ -70,6 +71,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 27.50,
     pvStatus: 'normal',
     lastOrderDate: new Date('2026-01-21'),
+    orderType: 'lrp',
     sponsor: { id: '16569186', name: 'Kojder Maria' },
     enroller: { id: '15156870', name: 'Kojder Martyna' },
     membershipType: 'WC',
@@ -88,6 +90,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 1200.00, // OV
     pvStatus: 'normal',
     lastOrderDate: new Date('2026-01-20'),
+    orderType: 'lrp',
     sponsor: { id: '18900006', name: 'Poziom Szósty' },
     enroller: { id: '18900006', name: 'Poziom Szósty' },
     membershipType: 'WA',
@@ -109,6 +112,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 2780.00, // OV
     pvStatus: 'success',
     lastOrderDate: new Date('2026-01-21'),
+    orderType: 'internet',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
     enroller: { id: '14769732', name: 'Chodorowska Emilia' },
     membershipType: 'WA',
@@ -125,6 +129,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 1580.50, // OV
     pvStatus: 'normal',
     lastOrderDate: new Date('2026-01-20'),
+    orderType: 'internet',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
     enroller: { id: '14769732', name: 'Chodorowska Emilia' },
     membershipType: 'WA',
@@ -141,6 +146,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 2100.00, // OV
     pvStatus: 'normal',
     lastOrderDate: new Date('2026-01-17'),
+    orderType: 'lrp',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
     enroller: { id: '14769732', name: 'Chodorowska Emilia' },
     membershipType: 'WA',
@@ -157,6 +163,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 2950.50, // OV
     pvStatus: 'success',
     lastOrderDate: new Date('2026-01-15'),
+    orderType: 'internet',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
     enroller: { id: '14769732', name: 'Chodorowska Emilia' },
     membershipType: 'WA',
@@ -173,6 +180,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 1050.00, // OV
     pvStatus: 'normal',
     lastOrderDate: new Date('2026-01-15'),
+    orderType: 'lrp',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
     enroller: { id: '14769732', name: 'Chodorowska Emilia' },
     membershipType: 'WA',
@@ -189,6 +197,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 1720.50, // OV
     pvStatus: 'normal',
     lastOrderDate: new Date('2026-01-14'),
+    orderType: 'internet',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
     enroller: { id: '14769732', name: 'Chodorowska Emilia' },
     membershipType: 'WA',
@@ -205,6 +214,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 2340.00, // OV
     pvStatus: 'normal',
     lastOrderDate: new Date('2026-01-14'),
+    orderType: 'lrp',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
     enroller: { id: '14769732', name: 'Chodorowska Emilia' },
     membershipType: 'WA',
@@ -221,6 +231,7 @@ export const structureMembers: StructureMember[] = [
     totalPV: 1380.00, // OV
     pvStatus: 'normal',
     lastOrderDate: new Date('2026-01-14'),
+    orderType: 'lrp',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
     enroller: { id: '14769732', name: 'Chodorowska Emilia' },
     membershipType: 'WA',
