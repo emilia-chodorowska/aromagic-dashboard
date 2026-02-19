@@ -144,7 +144,7 @@ export const structureMembers: StructureMember[] = [
     name: 'Kluj Aneta',
     ordersCount: 9,
     totalPV: 2100.00, // OV
-    pvStatus: 'normal',
+    pvStatus: 'success',
     lastOrderDate: new Date('2026-01-17'),
     orderType: 'lrp',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
@@ -178,7 +178,7 @@ export const structureMembers: StructureMember[] = [
     name: 'Szypłowska Gabriela',
     ordersCount: 4,
     totalPV: 1050.00, // OV
-    pvStatus: 'normal',
+    pvStatus: 'success',
     lastOrderDate: new Date('2026-01-15'),
     orderType: 'lrp',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
@@ -229,7 +229,7 @@ export const structureMembers: StructureMember[] = [
     name: 'Flisak Monika',
     ordersCount: 3,
     totalPV: 1380.00, // OV
-    pvStatus: 'normal',
+    pvStatus: 'success',
     lastOrderDate: new Date('2026-01-14'),
     orderType: 'lrp',
     sponsor: { id: '14769732', name: 'Chodorowska Emilia' },
