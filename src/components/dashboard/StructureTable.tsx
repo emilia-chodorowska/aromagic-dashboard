@@ -88,16 +88,21 @@ export function StructureTable({ members, onMemberClick }: StructureTableProps) 
     return (
       <div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => onMemberClick?.(member)}
-            className={`font-medium text-left hover:underline transition-colors ${
-              isBreakNameColor
-                ? 'text-orange-600 hover:text-orange-700'
-                : 'hover:text-green-600'
-            }`}
-          >
-            {member.name}
-          </button>
+          {isBreakNameColor ? (
+            <button
+              onClick={() => onMemberClick?.(member)}
+              className="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-semibold text-orange-700 text-left hover:bg-orange-200 transition-colors"
+            >
+              {member.name}
+            </button>
+          ) : (
+            <button
+              onClick={() => onMemberClick?.(member)}
+              className="font-medium text-left hover:text-green-600 hover:underline transition-colors"
+            >
+              {member.name}
+            </button>
+          )}
           {isBreakNameBadge && (
             <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
               Po przerwie
