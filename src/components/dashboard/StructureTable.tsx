@@ -56,7 +56,7 @@ export function StructureTable({ members, onMemberClick }: StructureTableProps) 
           ) : (
             formatPV(member.totalPV)
           )}
-          <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
+          <span className="inline-flex items-center rounded-full bg-orange-50 px-2 py-0.5 text-[10px] font-medium text-orange-500">
             Po przerwie
           </span>
         </div>
@@ -91,7 +91,7 @@ export function StructureTable({ members, onMemberClick }: StructureTableProps) 
           {isBreakNameColor ? (
             <button
               onClick={() => onMemberClick?.(member)}
-              className="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-semibold text-orange-700 text-left hover:bg-orange-200 transition-colors"
+              className="inline-flex items-center rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-medium text-orange-500 text-left hover:bg-orange-100 transition-colors"
             >
               {member.name}
             </button>
@@ -104,7 +104,7 @@ export function StructureTable({ members, onMemberClick }: StructureTableProps) 
             </button>
           )}
           {isBreakNameBadge && (
-            <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
+            <span className="inline-flex items-center rounded-full bg-orange-50 px-2 py-0.5 text-[10px] font-medium text-orange-500">
               Po przerwie
             </span>
           )}
