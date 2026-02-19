@@ -9,7 +9,7 @@ import {
 import { MembershipBadge } from './MembershipBadge'
 import { FastStartBadge } from './FastStartBadge'
 import { Copy, Users, List, RotateCcw, ArrowUpDown } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import type { StructureMember } from '@/types'
 
 interface StructureTableProps {
@@ -24,12 +24,12 @@ export function StructureTable({ members, onMemberClick }: StructureTableProps) 
   const formatDate = (date: Date | null) =>
     date ? date.toLocaleDateString('pl-PL') : '-'
 
-  const getPVClassName = (status: StructureMember['pvStatus']) => {
+  const getPVBadgeClassName = (status: StructureMember['pvStatus']) => {
     switch (status) {
       case 'success':
-        return 'text-green-600 font-medium'
+        return 'inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-700'
       case 'warning':
-        return 'text-orange-600 font-medium'
+        return 'inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-semibold text-orange-700'
       default:
         return ''
     }
@@ -41,7 +41,7 @@ export function StructureTable({ members, onMemberClick }: StructureTableProps) 
         <TableRow className="hover:bg-transparent">
           <TableHead>Klient</TableHead>
           <TableHead>Zamówienia</TableHead>
-          <TableHead>Łączne PV</TableHead>
+          <TableHead>PV</TableHead>
           <TableHead className="flex items-center gap-1">
             Ostatnie zamówienie
             <ArrowUpDown className="h-3 w-3" />
@@ -84,10 +84,12 @@ export function StructureTable({ members, onMemberClick }: StructureTableProps) 
                 <span className="inline-flex items-center rounded-full bg-[#eff6ff] px-2.5 py-0.5 text-xs font-semibold text-blue-700">
                   {formatPV(member.totalPV)}
                 </span>
-              ) : (
-                <span className={cn(getPVClassName(member.pvStatus))}>
+              ) : member.pvStatus !== 'normal' ? (
+                <span className={getPVBadgeClassName(member.pvStatus)}>
                   {formatPV(member.totalPV)}
                 </span>
+              ) : (
+                formatPV(member.totalPV)
               )}
             </TableCell>
             <TableCell>{formatDate(member.lastOrderDate)}</TableCell>
